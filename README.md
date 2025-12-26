@@ -16,6 +16,7 @@ Only use this tool if you absolutely cannot read the novel online.
 ```bash
 ./gradlew.bat build
 ```
+
 ### Usage
 
 **Scrape Volume x:**

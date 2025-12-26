@@ -1,6 +1,7 @@
 *.epub
 wandering_inn.db
 
+resources/
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar
