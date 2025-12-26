@@ -7,10 +7,10 @@ import org.jsoup.select.Elements;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class ChapterScraperTest {
 
@@ -108,7 +108,7 @@ class ChapterScraperTest {
     // The image has alt="" so we might search for the src or the structure
     boolean hasImage = chapter.content().contains("Bloodfields_Archival.png");
     assertTrue(hasImage, "Chapter content should contain the Bloodfields image");
-    
+
     // Ensure srcset is removed for EPUB compatibility
     assertFalse(chapter.content().contains("srcset="), "Image should not have srcset attribute");
   }

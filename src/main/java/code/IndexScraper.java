@@ -37,8 +37,8 @@ public class IndexScraper {
   public List<Chapter> getChaptersForVolume(int volumeNumber) throws IOException {
     logger.info("Fetching Table of Contents for Volume {} from {}", volumeNumber, TOC_URL);
     Document doc = Jsoup.connect(TOC_URL)
-            .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
-            .get();
+        .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
+        .get();
     return parseChaptersForVolume(doc, volumeNumber);
   }
 
