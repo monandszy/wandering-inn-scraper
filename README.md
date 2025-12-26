@@ -17,17 +17,17 @@ Only use this tool if you absolutely cannot read the novel online.
 ./gradlew.bat build
 ```
 
-### Usage
+### Example Usage
 
-**Scrape Volume x:**
+**Scrape Volume 1**
 ```bash
-./gradlew run --args="x"
+./gradlew run --args="1"
 ```
 
-**Scrape Volume x (Force Update):**
+**Scrape Volume 1 (Force Update):**
 Use the `--force` or `-f` flag to ignore the local db cache and re-download the chapter.
 ```bash
-./gradlew run --args="x --force"
+./gradlew run --args="1 --force"
 ```
 
 ### Using the JAR
@@ -35,7 +35,7 @@ Use the `--force` or `-f` flag to ignore the local db cache and re-download the 
 After building, the JAR file will be located in `build/libs/`.
 
 ```bash
-java -jar build/libs/wandering-inn-scraper-1.0-SNAPSHOT.jar x --force
+java -jar build/libs/wandering-inn-scraper-1.0-SNAPSHOT.jar 1 --force
 ```
 
 ## Project Structure
