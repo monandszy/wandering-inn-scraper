@@ -1,6 +1,7 @@
 *.epub
 wandering_inn.db
 
+*.html
 resources/
 .gradle
 build/
