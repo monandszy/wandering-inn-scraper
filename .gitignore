@@ -1,3 +1,6 @@
+*.epub
+wandering_inn.db
+
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar

@@ -10,34 +10,26 @@ public class Main {
 
   public static void main(String[] args) {
     logger.info("Starting Wandering Inn Scraper...");
-    IndexScraper indexScraper = new IndexScraper();
-    ChapterScraper chapterScraper = new ChapterScraper();
-    EpubGenerator epubGenerator = new EpubGenerator();
+    
+    VolumeScraperService service = new VolumeScraperService();
+    
+    int volumeToScrape = 1;
+    boolean forceUpdate = false;
 
-    try {
-      List<Chapter> allChapters = indexScraper.getChapterList();
-
-      // For testing/safety, let's limit to first 5 chapters by default unless args say otherwise
-      // If you want all, pass "all" as argument
-      int limit = 5;
-      if (args.length > 0 && "all".equalsIgnoreCase(args[0])) {
-        limit = allChapters.size();
-      }
-
-      logger.info("Processing {} chapters...", Math.min(limit, allChapters.size()));
-
-      List<Chapter> chaptersToProcess = new java.util.ArrayList<>();
-      for (int i = 0; i < Math.min(limit, allChapters.size()); i++) {
-        Chapter chapter = allChapters.get(i);
-        chaptersToProcess.add(chapterScraper.fetchChapterContent(chapter));
-        // Be polite to the server
-        Thread.sleep(1000);
-      }
-
-      epubGenerator.createEpub(chaptersToProcess, "wandering_inn.epub");
-
-    } catch (Exception e) {
-      logger.error("An error occurred", e);
+    if (args.length > 0) {
+        try {
+            volumeToScrape = Integer.parseInt(args[0]);
+        } catch (NumberFormatException e) {
+            logger.warn("Invalid volume number provided, defaulting to 1");
+        }
     }
+
+    if (args.length > 1) {
+        if (args[1].equalsIgnoreCase("--force") || args[1].equalsIgnoreCase("-f")) {
+            forceUpdate = true;
+        }
+    }
+    
+    service.scrapeVolume(volumeToScrape, "The_Wandering_Inn_Vol_" + volumeToScrape + ".epub", forceUpdate);
   }
 }

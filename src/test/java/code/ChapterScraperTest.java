@@ -4,11 +4,13 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class ChapterScraperTest {
 
@@ -16,42 +18,38 @@ class ChapterScraperTest {
 
   @Test
   void testFetchChapterContentFromFixture() throws java.io.IOException {
+    // Given
     java.io.File input = new java.io.File("src/test/resources/chapter_1_00.html");
     assertTrue(input.exists(), "Fixture file src/test/resources/chapter_1_00.html not found. Run curl command first.");
-
-    // Mocking the network call by parsing the file directly is not exactly what ChapterScraper does (it calls Jsoup.connect),
-    // but we can refactor ChapterScraper to accept a Document or use a mock server.
-    // For now, let's just test the parsing logic if we extract it, or we can't easily test Jsoup.connect without a mock.
-    // However, the user asked to "examine a part of the page for the content structure", so let's assume we want to test the parsing logic.
-
-    // To test properly without network, I should refactor ChapterScraper to separate fetching and parsing.
-    // But for this task, I will just create a test that parses the fixture manually and asserts on the logic I would put in a parse method.
 
     Document doc = Jsoup.parse(input, "UTF-8", "https://wanderinginn.com/2017/03/03/rw1-00/");
     Chapter chapter = new Chapter("1.00", "https://wanderinginn.com/2017/03/03/rw1-00/", null);
 
-    // I'll add a parse method to ChapterScraper to make it testable
+    // When
     Chapter updatedChapter = scraper.parseChapterContent(doc, chapter);
 
+    // Then
     assertNotNull(updatedChapter.content());
     assertNotEquals("<p>Content not found</p>", updatedChapter.content());
     assertTrue(updatedChapter.title().contains("1.00"));
   }
 
   @Test
+  @Disabled
   void inspectChapterContentStructure() throws java.io.IOException {
+    // Given
     java.io.File input = new java.io.File("src/test/resources/chapter_1_00.html");
     assertTrue(input.exists(), "Fixture file src/test/resources/chapter_1_00.html not found.");
 
+    // When
     Document doc = Jsoup.parse(input, "UTF-8", "https://wanderinginn.com/2017/03/03/rw1-00/");
 
-    // Based on previous exploration, we know #main-content or .entry-content might be relevant.
-    // Let's check .entry-content specifically as it's a standard WordPress class for content.
     Element content = doc.selectFirst(".entry-content");
     if (content == null) {
       content = doc.getElementById("main-content");
     }
 
+    // Then
     if (content != null) {
       System.out.println("Found content container (" + content.tagName() + " class=" + content.className() + " id=" + content.id() + "):");
       // Print the first 1000 chars to see the start of the content and any potential clutter
@@ -68,11 +66,16 @@ class ChapterScraperTest {
   }
 
   @Test
+  @Disabled
   void locateClutter() throws java.io.IOException {
+    // Given
     java.io.File input = new java.io.File("src/test/resources/chapter_1_00.html");
     Document doc = Jsoup.parse(input, "UTF-8", "https://wanderinginn.com/2017/03/03/rw1-00/");
 
+    // When
     Elements sharedaddy = doc.select(".sharedaddy");
+
+    // Then
     System.out.println("Found " + sharedaddy.size() + " .sharedaddy elements");
     for (Element e : sharedaddy) {
       System.out.println("Parent of .sharedaddy: " + e.parent().tagName() + " class=" + e.parent().className() + " id=" + e.parent().id());
@@ -86,5 +89,52 @@ class ChapterScraperTest {
         p = p.parent();
       }
     }
+  }
+
+  @Test
+  void testParseChapterWithImageAtEnd() throws java.io.IOException {
+    // Given
+    java.io.File input = new java.io.File("src/test/resources/chapter_1_55_R.html");
+    assertTrue(input.exists(), "Fixture file src/test/resources/chapter_1_55_R.html not found.");
+    String url = "https://wanderinginn.com/2017/03/04/rw1-55-r/";
+
+    // When
+    Document doc = Jsoup.parse(input, "UTF-8", url);
+    Chapter chapter = scraper.parseChapterContent(doc, new Chapter("Test Title", url, null));
+
+    // Then
+    assertNotNull(chapter);
+    // Check if the image is present in the content
+    // The image has alt="" so we might search for the src or the structure
+    boolean hasImage = chapter.content().contains("Bloodfields_Archival.png");
+    assertTrue(hasImage, "Chapter content should contain the Bloodfields image");
+    
+    // Ensure srcset is removed for EPUB compatibility
+    assertFalse(chapter.content().contains("srcset="), "Image should not have srcset attribute");
+  }
+
+  @Test
+  void testParseChapterWithImageOnlyParagraphAtEnd() {
+    // Given
+    String html = """
+        <html>
+        <head><title>Test Chapter - The Wandering Inn</title></head>
+        <body>
+          <div class="twi-article">
+            <p>Some text.</p>
+            <p><img src="map.png" /></p>
+          </div>
+        </body>
+        </html>
+        """;
+    Document doc = Jsoup.parse(html);
+    String url = "https://wanderinginn.com/test";
+
+    // When
+    Chapter chapter = scraper.parseChapterContent(doc, new Chapter("Test Chapter", url, null));
+
+    // Then
+    assertNotNull(chapter);
+    assertTrue(chapter.content().contains("map.png"), "Image in last paragraph should be preserved");
   }
 }

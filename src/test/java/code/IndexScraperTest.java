@@ -3,6 +3,7 @@ package code;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -16,19 +17,18 @@ class IndexScraperTest {
 
   @Test
   void testParseChapterListFromFixture() throws java.io.IOException {
+    // Given
     java.io.File input = new java.io.File("src/test/resources/toc.html");
-    // Ensure the file exists before trying to parse it, to give a clear error if curl failed
     assertTrue(input.exists(), "Fixture file src/test/resources/toc.html not found. Run curl command first.");
-
     Document doc = Jsoup.parse(input, "UTF-8", "https://wanderinginn.com/table-of-contents/");
 
+    // When
     List<Chapter> chapters = scraper.parseChapterList(doc);
 
+    // Then
     assertFalse(chapters.isEmpty(), "Should find chapters in the real TOC");
-    // We expect a large number of chapters, definitely more than 100
     assertTrue(chapters.size() > 100, "Should find many chapters (found " + chapters.size() + ")");
 
-    // Check for a known chapter
     boolean foundFirstChapter = chapters.stream()
         .anyMatch(c -> c.title().contains("1.00") && c.url().contains("1-00"));
     assertTrue(foundFirstChapter, "Should find chapter 1.00");
@@ -38,13 +38,17 @@ class IndexScraperTest {
   }
 
   @Test
+  @Disabled
   void inspectTableOfContents() throws java.io.IOException {
+    // Given
     java.io.File input = new java.io.File("src/test/resources/toc.html");
     assertTrue(input.exists(), "Fixture file src/test/resources/toc.html not found.");
 
+    // When
     Document doc = Jsoup.parse(input, "UTF-8", "https://wanderinginn.com/table-of-contents/");
     Element toc = doc.getElementById("table-of-contents");
 
+    // Then
     if (toc != null) {
       System.out.println("Found #table-of-contents:");
       // Print the structure (children tags) to understand what to parse

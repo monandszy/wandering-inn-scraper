@@ -62,6 +62,26 @@ public class ChapterScraper {
   private void cleanContent(Element contentElement) {
     removeNavigationLinks(contentElement);
     removeTrailingEmptyElements(contentElement);
+    cleanImages(contentElement);
+  }
+
+  private void cleanImages(Element contentElement) {
+    for (Element img : contentElement.select("img")) {
+      img.removeAttr("loading");
+      img.removeAttr("decoding");
+      img.removeAttr("srcset");
+      img.removeAttr("sizes");
+
+      java.util.List<String> attributesToRemove = new java.util.ArrayList<>();
+      for (org.jsoup.nodes.Attribute attr : img.attributes()) {
+        if (attr.getKey().startsWith("data-")) {
+          attributesToRemove.add(attr.getKey());
+        }
+      }
+      for (String attr : attributesToRemove) {
+        img.removeAttr(attr);
+      }
+    }
   }
 
   private void removeNavigationLinks(Element contentElement) {
@@ -82,8 +102,14 @@ public class ChapterScraper {
   }
 
   private boolean isEmptyParagraph(Element element) {
-    return element.tagName().equals(Selector.PARAGRAPH.id) &&
-        (element.text().trim().isEmpty() || element.html().equals("&nbsp;"));
+    if (!element.tagName().equals(Selector.PARAGRAPH.id)) {
+      return false;
+    }
+    // Check for content other than text
+    if (!element.select("img, iframe, svg, canvas, video, audio").isEmpty()) {
+      return false;
+    }
+    return element.text().trim().isEmpty() || element.html().equals("&nbsp;");
   }
 
   private boolean isHorizontalRule(Element element) {
