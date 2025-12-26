@@ -18,7 +18,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class VolumeScraperServiceTest {
+class VolumeScraperTest {
 
   @Mock
   private IndexScraper indexScraper;
@@ -33,7 +33,7 @@ class VolumeScraperServiceTest {
   private ChapterRepository chapterRepository;
 
   @InjectMocks
-  private VolumeScraperService volumeScraperService;
+  private VolumeScraper volumeScraper;
 
   @Test
   void testScrapeVolume() throws IOException {
@@ -57,7 +57,7 @@ class VolumeScraperServiceTest {
     when(chapterScraper.fetchChapterContent(chapter2)).thenReturn(fetchedChapter2);
 
     // When
-    volumeScraperService.scrapeVolume(volumeNumber, outputPath, false);
+    volumeScraper.scrapeVolume(volumeNumber, outputPath, false);
 
     // Then
     verify(indexScraper).getChaptersForVolume(volumeNumber);
@@ -89,7 +89,7 @@ class VolumeScraperServiceTest {
     when(chapterScraper.fetchChapterContent(chapter1)).thenReturn(fetchedChapter1);
 
     // When
-    volumeScraperService.scrapeVolume(volumeNumber, outputPath, true);
+    volumeScraper.scrapeVolume(volumeNumber, outputPath, true);
 
     // Then
     // Verify we did NOT check the cache (or at least ignored it)

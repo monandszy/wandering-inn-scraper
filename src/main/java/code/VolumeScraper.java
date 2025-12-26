@@ -10,14 +10,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class VolumeScraperService {
-  private static final Logger logger = LoggerFactory.getLogger(VolumeScraperService.class);
+public class VolumeScraper {
+  private static final Logger logger = LoggerFactory.getLogger(VolumeScraper.class);
   private final IndexScraper indexScraper;
   private final ChapterScraper chapterScraper;
   private final EpubGenerator epubGenerator;
   private final ChapterRepository chapterRepository;
 
-  public VolumeScraperService() {
+  public VolumeScraper() {
     DatabaseManager dbManager = new DatabaseManager();
     this.indexScraper = new IndexScraper();
     this.chapterScraper = new ChapterScraper();
@@ -25,7 +25,7 @@ public class VolumeScraperService {
     this.chapterRepository = new ChapterRepository(dbManager);
   }
 
-  public VolumeScraperService(IndexScraper indexScraper, ChapterScraper chapterScraper, EpubGenerator epubGenerator, ChapterRepository chapterRepository) {
+  public VolumeScraper(IndexScraper indexScraper, ChapterScraper chapterScraper, EpubGenerator epubGenerator, ChapterRepository chapterRepository) {
     this.indexScraper = indexScraper;
     this.chapterScraper = chapterScraper;
     this.epubGenerator = epubGenerator;

@@ -9,7 +9,7 @@ public class Main {
   public static void main(String[] args) {
     logger.info("Starting Wandering Inn Scraper...");
 
-    VolumeScraperService service = new VolumeScraperService();
+    VolumeScraper service = new VolumeScraper();
 
     int volumeToScrape = 1;
     boolean forceUpdate = false;

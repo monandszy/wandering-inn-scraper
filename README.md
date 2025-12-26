@@ -1,14 +1,11 @@
 # Wandering Inn Scraper
 
 A Java-based tool to scrape volumes of the web serial [The Wandering Inn](https://wanderinginn.com/) and compile them into EPUB files.
+Written on 26.12.2025 to have something to read on my e-reader during my Christmas break.
 
-## Features
-
-- **Volume-based Scraping**: Scrapes entire volumes at a time.
-- **EPUB Generation**: Creates properly formatted EPUB files with a Table of Contents.
-- **Smart Caching**: Uses a local SQLite database (`wandering_inn.db`) to cache chapter content, preventing redundant network requests and speeding up subsequent runs.
-- **Content Cleanup**: Removes navigation links, comments, and other web clutter.
-- **Rate Limiting**: Includes polite delays to respect the server.
+I do not affiliate with 'The Wandering in', All rights attributed to pirateabe (Thank you!). 
+If you have the option, I highly encourage you to read on the official site, and to support the author by buying the official releases on [Amazon](https://www.amazon.com/stores/pirate-aba/author/B07XCYVYMW)
+Only use this tool if you absolutely cannot read the novel online.
 
 ## Prerequisites
 
@@ -17,11 +14,7 @@ A Java-based tool to scrape volumes of the web serial [The Wandering Inn](https:
 ## Building
 
 ```bash
-# Linux/macOS
-./gradlew build
-
-# Windows
-.\gradlew.bat build
+./gradlew.bat build
 ```
 ### Usage
 
@@ -41,14 +34,14 @@ Use the `--force` or `-f` flag to ignore the local db cache and re-download the 
 After building, the JAR file will be located in `build/libs/`.
 
 ```bash
-java -jar build/libs/wandering-inn-scraper-1.0-SNAPSHOT.jar 1
+java -jar build/libs/wandering-inn-scraper-1.0-SNAPSHOT.jar x --force
 ```
 
 ## Project Structure
 
 - `src/main/java/code/`
   - `Main.java`: Entry point.
-  - `VolumeScraperService.java`: Orchestrates the scraping and EPUB generation process.
+  - `VolumeScraper.java`: Orchestrates the scraping and EPUB generation process.
   - `ChapterScraper.java`: Handles downloading and parsing individual chapters.
   - `IndexScraper.java`: Parses the Table of Contents.
   - `EpubGenerator.java`: Compiles chapters into an EPUB.
